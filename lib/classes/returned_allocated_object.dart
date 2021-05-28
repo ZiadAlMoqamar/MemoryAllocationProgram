@@ -3,7 +3,7 @@ import 'package:memory_allocation/classes/memory.dart';
 class ReturnedAllocatedObject{
   bool status =false;
   String message ='';
-  Memory? output;
+  Memory? memory;
 
-  ReturnedAllocatedObject({this.status=false,this.message='',this.output});
+  ReturnedAllocatedObject({this.status=false,this.message='',this.memory});
 }

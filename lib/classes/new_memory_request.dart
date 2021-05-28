@@ -4,7 +4,6 @@ class NewMemoryRequest{
   int size =0;
 
   //nullable list
-  List <Hole>? holes;
+  List <Hole> holes=[];
 
-  NewMemoryRequest({this.size =0,this.holes});
 }
