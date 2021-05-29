@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:memory_allocation/classes/deallocated_object.dart';
+import 'package:memory_allocation/classes/memory_object.dart';
 import 'package:memory_allocation/classes/new_memory_request.dart';
 import 'package:memory_allocation/classes/hole.dart';
 import 'package:memory_allocation/classes/returned_allocated_object.dart';
-import 'package:memory_allocation/logic/implementation.dart' as impl;
+import 'package:memory_allocation/logic/deallocation.dart';
+import 'package:memory_allocation/logic/intializing.dart' as intializing;
 import 'package:memory_allocation/classes/memory.dart';
+import 'package:memory_allocation/logic/globals.dart' as global;
 
 void main() {
   runApp(MyApp());
@@ -54,20 +58,58 @@ class _MyHomePageState extends State<MyHomePage> {
       _counter++;
     });
   }
-  
-  
+
   @override
   Widget build(BuildContext context) {
-    NewMemoryRequest memoReqExample = NewMemoryRequest();
-    memoReqExample.size =100;
-    memoReqExample.holes.add(Hole(startAddress: 0, size: 10));
-    
-    ReturnedAllocatedObject test = impl.makeNewMemory(memoReqExample);
-    print(test.status);
-    print(test.message);
-    print(test);
-    print(impl.memorySize);
-    Memory x = impl.memo;
+    // NewMemoryRequest memoReqExample = NewMemoryRequest();
+    // memoReqExample.size =100;
+    // memoReqExample.holes.add(Hole(startAddress: 0, size: 20));
+    // memoReqExample.holes.add(Hole(startAddress: 30, size: 20));
+    // memoReqExample.holes.add(Hole(startAddress: 60, size: 40));
+    // ReturnedAllocatedObject test = intializing.makeNewMemory(memoReqExample);
+    // print(test.status);
+    // print(test.message);
+    // print(test);
+    global.memo.memoryObjectList.add(MemoryObject(
+        name: "hole 0",
+        type: "hole",
+        id: 0,
+        processId: null,
+        startAddress: 0,
+        size: 20));
+        global.memo.memoryObjectList.add(MemoryObject(
+        name: "hole 1",
+        type: "hole",
+        id: 1,
+        processId: null,
+        startAddress: 50,
+        size: 50));
+        global.memo.memoryObjectList.add(MemoryObject(
+        name: "bla bla",
+        type: "process",
+        id: 0,
+        processId: 0,
+        startAddress: 20,
+        size: 10));
+        global.memo.memoryObjectList.add(MemoryObject(
+        name: "bla bla",
+        type: "process",
+        id: 1,
+        processId: 0,
+        startAddress: 30,
+        size: 10));
+        global.memo.memoryObjectList.add(MemoryObject(
+        name: "bla bla",
+        type: "process",
+        id: 2,
+        processId: 0,
+        startAddress: 40,
+        size: 10));
+    print(global.memorySize);
+    DeallocatedObject testde =
+        DeallocatedObject(processId: 0, type: "process", id: null);
+    var returned = deallocate(testde);
+    Memory x = global.memo;
     print(x);
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.

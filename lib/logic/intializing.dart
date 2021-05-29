@@ -2,9 +2,8 @@ import 'package:memory_allocation/classes/memory.dart';
 import 'package:memory_allocation/classes/memory_object.dart';
 import 'package:memory_allocation/classes/new_memory_request.dart';
 import 'package:memory_allocation/classes/returned_allocated_object.dart';
+import 'package:memory_allocation/logic/globals.dart' as global;
 
-Memory memo = Memory();
-int memorySize = 0;
 
 ReturnedAllocatedObject makeNewMemory(NewMemoryRequest req) {
   ReturnedAllocatedObject funcOutput = ReturnedAllocatedObject();
@@ -56,14 +55,15 @@ ReturnedAllocatedObject makeNewMemory(NewMemoryRequest req) {
   }
 
   //overwrite the memorySize to the new size
-  memorySize = req.size;
+  global.memorySize = req.size;
 
   //sort holes according to start address
   req.holes.sort((a, b) => a.startAddress.compareTo(b.startAddress));
 
   //overwrite the global variable "memory" to just the new holes
+  global.memo.memoryObjectList.clear();
   for (int i = 0; i < req.holes.length; i++) {
-    memo.memoryObjectList.add(MemoryObject(
+    global.memo.memoryObjectList.add(MemoryObject(
         name: "hole " + i.toString(),
         type: "hole",
         id: i,
@@ -77,7 +77,7 @@ ReturnedAllocatedObject makeNewMemory(NewMemoryRequest req) {
   //check if there is an old process at address 0
   bool isThereStartOldProcess = false;
   if (req.holes.first.startAddress != 0) {
-    memo.memoryObjectList.add(MemoryObject(
+    global.memo.memoryObjectList.add(MemoryObject(
         name: "old process 0",
         type: "old process",
         id: 0,
@@ -91,7 +91,7 @@ ReturnedAllocatedObject makeNewMemory(NewMemoryRequest req) {
     int oldProcessNum =
         (isThereStartOldProcess) ? req.holes.length : req.holes.length - 1;
     int startAdd = req.holes.last.startAddress + req.holes.last.size ;
-    memo.memoryObjectList.add(MemoryObject(
+    global.memo.memoryObjectList.add(MemoryObject(
         name: "old process " + oldProcessNum.toString(),
         type: "old process",
         id: oldProcessNum,
@@ -106,7 +106,7 @@ ReturnedAllocatedObject makeNewMemory(NewMemoryRequest req) {
       int oldProcessStartingAdd = req.holes[i].startAddress + req.holes[i].size ;
       int oldProcessSize =
           req.holes[i + 1].startAddress - oldProcessStartingAdd ;
-      memo.memoryObjectList.add(MemoryObject(
+      global.memo.memoryObjectList.add(MemoryObject(
           name: "old process " + (i + 1).toString(),
           type: "old process",
           id: i + 1,
@@ -118,7 +118,7 @@ ReturnedAllocatedObject makeNewMemory(NewMemoryRequest req) {
       int oldProcessStartingAdd = req.holes[i].startAddress + req.holes[i].size ;
       int oldProcessSize =
           req.holes[i + 1].startAddress - oldProcessStartingAdd ;
-      memo.memoryObjectList.add(MemoryObject(
+      global.memo.memoryObjectList.add(MemoryObject(
           name: "old process " + (i).toString(),
           type: "old process",
           id: i,
@@ -127,8 +127,9 @@ ReturnedAllocatedObject makeNewMemory(NewMemoryRequest req) {
     }
   }
 //sort memory according to starting address
-  memo.memoryObjectList.sort((a, b) => a.startAddress.compareTo(b.startAddress));
+  global.memo.memoryObjectList.sort((a, b) => a.startAddress.compareTo(b.startAddress));
 //the function should return the memory to the front end to be drawn
-  funcOutput.memory=memo;
+  funcOutput.memory = global.memo;
+  funcOutput.status=true;
   return funcOutput;
 }
