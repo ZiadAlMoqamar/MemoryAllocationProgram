@@ -4,10 +4,13 @@ import 'package:memory_allocation/classes/memory_object.dart';
 import 'package:memory_allocation/classes/new_memory_request.dart';
 import 'package:memory_allocation/classes/hole.dart';
 import 'package:memory_allocation/classes/returned_allocated_object.dart';
+import 'package:memory_allocation/logic/allocation.dart';
 import 'package:memory_allocation/logic/deallocation.dart';
 import 'package:memory_allocation/logic/intializing.dart' as intializing;
 import 'package:memory_allocation/classes/memory.dart';
 import 'package:memory_allocation/logic/globals.dart' as global;
+
+import 'classes/process.dart';
 
 void main() {
   runApp(MyApp());
@@ -70,45 +73,76 @@ class _MyHomePageState extends State<MyHomePage> {
     // print(test.status);
     // print(test.message);
     // print(test);
+    global.memorySize = 100;
     global.memo.memoryObjectList.add(MemoryObject(
         name: "hole 0",
         type: "hole",
         id: 0,
         processId: null,
-        startAddress: 0,
-        size: 20));
-        global.memo.memoryObjectList.add(MemoryObject(
+        startAddress: 10,
+        size: 30));
+    global.memo.memoryObjectList.add(MemoryObject(
         name: "hole 1",
         type: "hole",
         id: 1,
         processId: null,
         startAddress: 50,
-        size: 50));
-        global.memo.memoryObjectList.add(MemoryObject(
-        name: "bla bla",
-        type: "process",
+        size: 40));
+      // global.memo.memoryObjectList.add(MemoryObject(
+      //   name: "hole 2",
+      //   type: "hole",
+      //   id: 2,
+      //   processId: null,
+      //   startAddress: 80,
+      //   size: 10));
+    global.memo.memoryObjectList.add(MemoryObject(
+        name: "old process 0",
+        type: "old process",
         id: 0,
-        processId: 0,
-        startAddress: 20,
+        processId: null,
+        startAddress: 0,
         size: 10));
-        global.memo.memoryObjectList.add(MemoryObject(
-        name: "bla bla",
-        type: "process",
+    global.memo.memoryObjectList.add(MemoryObject(
+        name: "old process 1",
+        type: "old process",
         id: 1,
-        processId: 0,
-        startAddress: 30,
-        size: 10));
-        global.memo.memoryObjectList.add(MemoryObject(
-        name: "bla bla",
-        type: "process",
-        id: 2,
-        processId: 0,
+        processId: null,
         startAddress: 40,
         size: 10));
+      global.memo.memoryObjectList.add(MemoryObject(
+        name: "old process 2",
+        type: "old process",
+        id: 2,
+        processId: null,
+        startAddress: 90,
+        size: 10));
+      //  global.memo.memoryObjectList.add(MemoryObject(
+      //   name: "old process 3",
+      //   type: "old process",
+      //   id: 3,
+      //   processId: null,
+      //   startAddress: 90,
+      //   size: 10));
+    // global.memo.memoryObjectList.add(MemoryObject(
+    //     name: "old process 2",
+    //     type: "old process",
+    //     id: 2,
+    //     processId: null,
+    //     startAddress: 70,
+    //     size: 30));
     print(global.memorySize);
-    DeallocatedObject testde =
-        DeallocatedObject(processId: 0, type: "process", id: null);
-    var returned = deallocate(testde);
+    // DeallocatedObject testde =
+    //     DeallocatedObject(processId: 0, type: "process", id: null);
+    // var returned = deallocate(testde);
+    List<MemoryObject> objectSegments = [];
+    objectSegments.add(MemoryObject(
+        name: "bla bla", type: "process", id: 0, processId: 0, size: 20));
+    objectSegments.add(MemoryObject(
+        name: "bla bla", type: "process", id: 1, processId: 0, size: 20));
+    // objectSegments.add(MemoryObject(
+    //     name: "bla bla", type: "process", id: 2, processId: 0, size: 40));
+    Process test = Process(id: 0, segments: objectSegments);
+    var returned = allocateProcess(test, "worst fit");
     Memory x = global.memo;
     print(x);
     // This method is rerun every time setState is called, for instance as done
