@@ -33,8 +33,7 @@ ReturnedAllocatedObject allocateProcess(Process funcInput, String allocationMeth
      //if found and the method is worst fit
      else if(allocationMethod == "worst fit"){
        //sort according to size DESC
-       global.memo.memoryObjectList.sort((a, b) => a.size.compareTo(b.size));
-       global.memo.memoryObjectList.reversed;
+       global.memo.memoryObjectList.sort((b, a) => a.size.compareTo(b.size));
        var worstFitHole = global.memo.memoryObjectList.firstWhere((element) => element.type=="hole" && element.size>=funcInput.segments![i].size);
        //allocate that memoryObject into that hole using allocateSegmentIntoHole() auxillary function
        allocateSegmentIntoHole(funcInput.segments![i],worstFitHole);
