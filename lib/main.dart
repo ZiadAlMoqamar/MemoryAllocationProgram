@@ -6,9 +6,10 @@ import 'package:memory_allocation/classes/hole.dart';
 import 'package:memory_allocation/classes/returned_allocated_object.dart';
 import 'package:memory_allocation/logic/allocation.dart';
 import 'package:memory_allocation/logic/deallocation.dart';
-import 'package:memory_allocation/logic/intializing.dart' as intializing;
+import 'package:memory_allocation/logic/intialization.dart' as intializing;
 import 'package:memory_allocation/classes/memory.dart';
 import 'package:memory_allocation/logic/globals.dart' as global;
+import 'package:memory_allocation/classes/hole.dart';
 
 import 'classes/process.dart';
 
@@ -21,11 +22,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Memory Allocation Program',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Home Page'),
     );
   }
 }
@@ -49,149 +50,320 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+ //here
+ 
+  int memorySizeInput = -1;
+  int holesNumInput = -1;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+
+  void setMemorySizeInput() {
+    setState(() {});
   }
+
+  void setHolesNumInput() {
+    setState(() {});
+  }
+
+  
+  TextEditingController numberOfHoles = TextEditingController();
+  int numberOfFields = 2;
+  var controllers;
+  List<Hole> input = [];
+  void generateInput() {
+    input = [];
+    int? numOfHoles = (numberOfHoles.text.length == 0)
+        ? 0
+        : double.tryParse(numberOfHoles.text) == null
+            ? 0
+            : int.tryParse(numberOfHoles.text);
+    for (var i = 0; i < numOfHoles!; i++) {
+      input.add(Hole());
+    }
+  }
+
+  void generateControllers() {
+    int? numOfHoles = numberOfHoles.text.length == 0
+        ? 0
+        : double.tryParse(numberOfHoles.text) == null
+            ? 0
+            : int.tryParse(numberOfHoles.text);
+    controllers = List.generate(numOfHoles!,
+        (index) => List.filled(numberOfFields, null, growable: false),
+        growable: false);
+    for (var i = 0; i < numOfHoles; i++) {
+      for (var j = 0; j < numberOfFields; j++) {
+        controllers[i][j] = TextEditingController();
+      }
+    }
+  }
+
+  var validators;
+  void generatevalidators() {
+    int? numOfHoles = numberOfHoles.text.length == 0
+        ? 0
+        : double.tryParse(numberOfHoles.text) == null
+            ? 0
+            : int.tryParse(numberOfHoles.text);
+    validators = List.generate(numOfHoles!,
+        (index) => List.filled(numberOfFields, null, growable: false),
+        growable: false);
+    for (var i = 0; i < numOfHoles; i++) {
+      for (var j = 0; j < numberOfFields; j++) {
+        validators[i][j] = false;
+      }
+    }
+  }
+
+  void clearControllers() {
+    int? numOfHoles = numberOfHoles.text.length == 0
+        ? 0
+        : double.tryParse(numberOfHoles.text) == null
+            ? 0
+            : int.tryParse(numberOfHoles.text);
+
+    for (var i = 0; i < numOfHoles!; i++) {
+      for (var j = 0; j < numberOfFields; j++) {
+        controllers[i][j].clear();
+      }
+    }
+  }
+
+  void emptyControllers() {
+    int? numOfHoles = numberOfHoles.text.length == 0
+        ? 0
+        : double.tryParse(numberOfHoles.text) == null
+            ? 0
+            : int.tryParse(numberOfHoles.text);
+
+    for (var i = 0; i < numOfHoles!; i++) {
+      for (var j = 0; j < numberOfFields; j++) {
+        controllers[i][j].clear();
+      }
+    }
+  }
+
+  TextEditingController general = TextEditingController();
+
+  Widget inputField(
+      Function onChanged, TextEditingController controller, bool valid) {
+    return Container(
+      width: 60,
+      margin: EdgeInsets.symmetric(vertical: 16),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          fillColor: Color(0xfff0f2f5),
+          filled: true,
+          errorText: valid
+              ? controller.text.length == 0
+                  ? 'Empty'
+                  : double.tryParse(controller.text) == null
+                      ? 'Invalid'
+                      : null
+              : null,
+          border: OutlineInputBorder(),
+        ),
+        textAlign: TextAlign.center,
+        onChanged: onChanged(),
+      ),
+    );
+  }
+
+  NewMemoryRequest reqes = NewMemoryRequest();
 
   @override
   Widget build(BuildContext context) {
-    // NewMemoryRequest memoReqExample = NewMemoryRequest();
-    // memoReqExample.size =100;
-    // memoReqExample.holes.add(Hole(startAddress: 0, size: 20));
-    // memoReqExample.holes.add(Hole(startAddress: 30, size: 20));
-    // memoReqExample.holes.add(Hole(startAddress: 60, size: 40));
-    // ReturnedAllocatedObject test = intializing.makeNewMemory(memoReqExample);
-    // print(test.status);
-    // print(test.message);
-    // print(test);
-    global.memorySize = 100;
-    global.memo.memoryObjectList.add(MemoryObject(
-        name: "hole 0",
-        type: "hole",
-        id: 0,
-        processId: null,
-        startAddress: 10,
-        size: 30));
-    global.memo.memoryObjectList.add(MemoryObject(
-        name: "hole 1",
-        type: "hole",
-        id: 1,
-        processId: null,
-        startAddress: 50,
-        size: 40));
-      // global.memo.memoryObjectList.add(MemoryObject(
-      //   name: "hole 2",
-      //   type: "hole",
-      //   id: 2,
-      //   processId: null,
-      //   startAddress: 80,
-      //   size: 10));
-    global.memo.memoryObjectList.add(MemoryObject(
-        name: "old process 0",
-        type: "old process",
-        id: 0,
-        processId: null,
-        startAddress: 0,
-        size: 10));
-    global.memo.memoryObjectList.add(MemoryObject(
-        name: "old process 1",
-        type: "old process",
-        id: 1,
-        processId: null,
-        startAddress: 40,
-        size: 10));
-      global.memo.memoryObjectList.add(MemoryObject(
-        name: "old process 2",
-        type: "old process",
-        id: 2,
-        processId: null,
-        startAddress: 90,
-        size: 10));
-      //  global.memo.memoryObjectList.add(MemoryObject(
-      //   name: "old process 3",
-      //   type: "old process",
-      //   id: 3,
-      //   processId: null,
-      //   startAddress: 90,
-      //   size: 10));
-    // global.memo.memoryObjectList.add(MemoryObject(
-    //     name: "old process 2",
-    //     type: "old process",
-    //     id: 2,
-    //     processId: null,
-    //     startAddress: 70,
-    //     size: 30));
-    print(global.memorySize);
-    // DeallocatedObject testde =
-    //     DeallocatedObject(processId: 0, type: "process", id: null);
-    // var returned = deallocate(testde);
-    List<MemoryObject> objectSegments = [];
-    objectSegments.add(MemoryObject(
-        name: "bla bla", type: "process", id: 0, processId: 0, size: 20));
-    objectSegments.add(MemoryObject(
-        name: "bla bla", type: "process", id: 1, processId: 0, size: 20));
-    // objectSegments.add(MemoryObject(
-    //     name: "bla bla", type: "process", id: 2, processId: 0, size: 40));
-    Process test = Process(id: 0, segments: objectSegments);
-    var returned = allocateProcess(test, "worst fit");
-    Memory x = global.memo;
-    print(x);
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+          body: Column(
+        children: [
+          // number of holes
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(width: 16),
+              Text('Number of Holes:'),
+              SizedBox(width: 15),
+              Container(
+                width: 50,
+                height: 50,
+                child: TextField(
+                  decoration: InputDecoration(
+                    fillColor: Color(0xfff0f2f5),
+                    filled: true,
+                    border: OutlineInputBorder(),
+                  ),
+                  textAlign: TextAlign.center,
+                  controller: numberOfHoles,
+                  onChanged: (s) {
+                    if (double.tryParse(numberOfHoles.text) != null)
+                      setState(() {
+                        generateInput();
+                        generateControllers();
+                        generatevalidators();
+                      });
+                    else
+                      setState(() {
+                        generateInput();
+                        generateControllers();
+                        generatevalidators();
+                      });
+                  },
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 25),
+          // titles
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                  width: 60,
+                  alignment: Alignment.center,
+                  child: Text(
+                    '#',
+                    textAlign: TextAlign.center,
+                  )),
+              SizedBox(width: 25),
+              Container(
+                  width: 60,
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Starting address',
+                    textAlign: TextAlign.center,
+                  )),
+              SizedBox(width: 25),
+              Container(
+                  width: 60,
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Size',
+                    textAlign: TextAlign.center,
+                  )),
+            ],
+          ),
+          // user input
+          Container(
+            height: 250,
+            child: Scrollbar(
+              isAlwaysShown: true,
+              thickness: 14,
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: numberOfHoles.text.length == 0 ? 0 : input.length,
+                  itemBuilder: (context, index) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 60,
+                          child: CircleAvatar(
+                              backgroundColor: Color(0xfff0f2f5),
+                              child: Text('$index')),
+                        ),
+                        SizedBox(width: 25),
+                        inputField((s) {
+                          setState(() {
+                            input[index].startAddress = int.tryParse(s)!;
+                          });
+                        }, controllers[index][0], validators[index][0]),
+                        SizedBox(width: 25),
+                        inputField((s) {
+                          setState(() {
+                            input[index].size = int.tryParse(s)!;
+                          });
+                        }, controllers[index][1], validators[index][1]),
+                      ],
+                    );
+                  }),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
+          ),
+          // function buttons
+          SizedBox(
+            height: 25,
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(width: 40),
+              ElevatedButton(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "Allocate",
+                    style: TextStyle(fontSize: 17),
+                  ),
+                ),
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
+                    ),
+                  ),
+                ),
+                onPressed: () {
+                  bool go = true;
+                  setState(() {
+                    go = true;
+                  });
+                  int? numOfHoles = numberOfHoles.text.length == 0
+                      ? 0
+                      : double.tryParse(numberOfHoles.text) == null
+                          ? 0
+                          : int.tryParse(numberOfHoles.text);
+                  for (var i = 0; i < numOfHoles!; i++) {
+                    for (var j = 0; j < numberOfFields; j++) {
+                      if (controllers[i][j].text.isEmpty ||
+                          double.tryParse(controllers[i][j].text) == null) {
+                        setState(() {
+                          validators[i][j] = true;
+                          go = false;
+                        });
+                      } else {
+                        setState(() {
+                          validators[i][j] = false;
+                        });
+                      }
+                    }
+                  }
+                  if (go && numberOfHoles.text.length != 0) {
+                    setState(() {
+                      reqes.size = memorySizeInput;
+                      reqes.holes = input;
+                    });
+                  }
+                },
+              ),
+              SizedBox(width: 25),
+              ElevatedButton(
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
+                    ),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'Clear',
+                    style: TextStyle(fontSize: 17),
+                  ),
+                ),
+                onPressed: () {
+                  setState(() {
+                    generateInput();
+                    clearControllers();
+                    numberOfHoles.clear();
+                  });
+                },
+              ),
+            ],
+          )
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
