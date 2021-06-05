@@ -7,6 +7,9 @@ import 'package:memory_allocation/logic/globals.dart' as global;
 
 ReturnedAllocatedObject makeNewMemory(NewMemoryRequest req) {
   ReturnedAllocatedObject funcOutput = ReturnedAllocatedObject();
+  
+   //sort holes according to start address
+  req.holes.sort((a, b) => a.startAddress.compareTo(b.startAddress));
 
   //check that the starting address and (the starting address + size) of each hole are within the memory size
   for (var hole in req.holes) {
